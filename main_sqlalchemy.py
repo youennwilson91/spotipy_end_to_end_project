@@ -13,15 +13,15 @@ import time
 scope = "user-top-read user-library-read user-read-recently-played"
 sp = spotipy.Spotify(
     auth_manager=SpotifyOAuth(
-        client_id="4f009464189c46a68944314cc79958a6",
-        client_secret="6f59229d30464c2589d8fdff0e44f13a",
+        client_id="xxxx",
+        client_secret="xxxx",
         redirect_uri="http://127.0.0.1:9090",
         scope=scope
     )
 )
 
 # PostgreSQL connection (hardcoded for this example)
-engine = create_engine('postgresql://postgres:2585@localhost:5432/spotipy')
+engine = create_engine('postgresql://postgres:xxxx@localhost:5432/spotipy')
 
 # Check if the directories to save Parquet files exist, if not create them
 directories = [
