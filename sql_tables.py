@@ -63,6 +63,6 @@ class RelatedArtists(Base):
 
 
 # Connect to the PostgreSQL database
-engine = create_engine('postgresql://postgres:2585@localhost:5432/spotipy')
+engine = create_engine('postgresql://postgres:xxxx@localhost:5432/spotipy')
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
