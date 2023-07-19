@@ -9,19 +9,22 @@ import random
 import os
 import uuid
 import time
+import psycopg2
+import fastparquet
+import pprint as p
 
 scope = "user-top-read user-library-read user-read-recently-played"
 sp = spotipy.Spotify(
     auth_manager=SpotifyOAuth(
-        client_id="xxxx",
-        client_secret="xxxx",
+        client_id="...",
+        client_secret="...",
         redirect_uri="http://127.0.0.1:9090",
         scope=scope
     )
 )
 
 # PostgreSQL connection (hardcoded for this example)
-engine = create_engine('postgresql://postgres:xxxx@localhost:5432/spotipy')
+engine = create_engine('postgresql://postgres:...@localhost:5432/spotipy')
 
 # Check if the directories to save Parquet files exist, if not create them
 directories = [
@@ -124,13 +127,6 @@ def get_top_artists(term):
     write_data(df, 'top_artists', "C:/SparkCourse/spotify/checkpoints/topartists")
     write_data(related_artists_df, 'related_artists', "C:/SparkCourse/spotify/checkpoints/related_artists")
 
-
-    # Close the session
-    session.close()
-
-    return artists
-
-
 def get_top_tracks(term):
     """
     Fetches the 20 top tracks for a user for each term (short_term, medium_term, or long_term),
@@ -171,6 +167,7 @@ def get_top_tracks(term):
         track['popularity'] = item["popularity"]
         track['key'] = analysis["track"]["key"]
         track['loudness'] = analysis["track"]["loudness"]
+        track['explicit'] = item["explicit"]
         track['term'] = term
         track["time"] = datetime.now()
 
@@ -201,7 +198,7 @@ def get_top_tracks(term):
 
 def get_recent_tracks():
     """
-    Fetches the 50 recently played tracks for a user, adds them to the recent_tracks table,
+    Fetches the 20 recently played tracks for a user, adds them to the recent_tracks table,
     and updates the related_artists table.
 
     Returns:
@@ -237,6 +234,7 @@ def get_recent_tracks():
         track['bpm'] = analysis["track"]["tempo"]
         track['key'] = analysis["track"]["key"]
         track['loudness'] = analysis["track"]["loudness"]
+        track['explicit'] = item["track"]["explicit"]
         track['played_at'] = item['played_at']
         track["time"] = datetime.now()
 
@@ -263,7 +261,7 @@ def get_recent_tracks():
 
     return tracks
 
-#The get_top_artists() and get_top_tracks functions need a time range, which will be either short, medium or long term
+# The get_top_artists() and get_top_tracks functions need a time range, which will be either short, medium or long term
 terms = ["short_term", "medium_term", "long_term"]
 
 # Start timer to check script execution time
@@ -279,12 +277,13 @@ try:
 
     get_recent_tracks()
 
+
 except spotipy.SpotifyException as e:
     print(f"An error has occurred with Spotipy: {e}")
 except spotipy.SpotifyOauthError as e:
-    print(f"Authentication Error: {e}")
+     print(f"Authentication Error: {e}")
 except Exception as e:
-    print(f"An unexpected error has occurred: {e}")
+     print(f"An unexpected error has occurred: {e}")
 else:
     print("SUCCESS ! ;)")
 finally:
