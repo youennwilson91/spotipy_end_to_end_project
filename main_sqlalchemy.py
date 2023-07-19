@@ -5,13 +5,11 @@ from spotipy.oauth2 import SpotifyOAuth
 from datetime import datetime
 from sqlalchemy.orm import Session
 from sql_tables import TopTracks, TopArtists, RecentTracks, RelatedArtists
-import random
-import os
 import uuid
 import time
 import psycopg2
 import fastparquet
-import pprint as p
+
 
 scope = "user-top-read user-library-read user-read-recently-played"
 sp = spotipy.Spotify(
