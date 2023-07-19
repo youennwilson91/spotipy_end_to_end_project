@@ -9,7 +9,7 @@ import uuid
 import time
 import psycopg2
 import fastparquet
-
+import os
 
 scope = "user-top-read user-library-read user-read-recently-played"
 sp = spotipy.Spotify(
