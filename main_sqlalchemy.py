@@ -5,11 +5,11 @@ from spotipy.oauth2 import SpotifyOAuth
 from datetime import datetime
 from sqlalchemy.orm import Session
 from sql_tables import TopTracks, TopArtists, RecentTracks, RelatedArtists
+import os
 import uuid
 import time
 import psycopg2
 import fastparquet
-import os
 
 scope = "user-top-read user-library-read user-read-recently-played"
 sp = spotipy.Spotify(
@@ -22,7 +22,7 @@ sp = spotipy.Spotify(
 )
 
 # PostgreSQL connection (hardcoded for this example)
-engine = create_engine('postgresql://postgres:...@localhost:5432/spotipy')
+engine = create_engine('postgresql://postgres:password@localhost:5432/spotipy')
 
 # Check if the directories to save Parquet files exist, if not create them
 directories = [
@@ -279,9 +279,9 @@ try:
 except spotipy.SpotifyException as e:
     print(f"An error has occurred with Spotipy: {e}")
 except spotipy.SpotifyOauthError as e:
-     print(f"Authentication Error: {e}")
+    print(f"Authentication Error: {e}")
 except Exception as e:
-     print(f"An unexpected error has occurred: {e}")
+    print(f"An unexpected error has occurred: {e}")
 else:
     print("SUCCESS ! ;)")
 finally:
