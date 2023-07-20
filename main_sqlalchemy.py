@@ -16,15 +16,15 @@ import pytz
 scope = "user-top-read user-library-read user-read-recently-played"
 sp = spotipy.Spotify(
     auth_manager=SpotifyOAuth(
-        client_id="...",
-        client_secret="...",
+        client_id="4f009464189c46a68944314cc79958a6",
+        client_secret="6f59229d30464c2589d8fdff0e44f13a",
         redirect_uri="http://127.0.0.1:9090",
         scope=scope
     )
 )
 
 # PostgreSQL connection (hardcoded for this example)
-engine = create_engine('postgresql://postgres:password@localhost:5432/spotipy')
+engine = create_engine('postgresql://postgres:2585@localhost:5432/spotipy')
 
 # Check if the directories to save Parquet files exist, if not create them
 directories = [
@@ -118,6 +118,12 @@ def get_recent_tracks():
     tracks = []
     artist_ids = []
 
+    # Start a new session
+    session = Session(bind=engine)
+
+    # Query all track ids from the recent_tracks table
+    existing_tracks = {row.id for row in session.query(RecentTracks.id)}
+
     results = sp.current_user_recently_played()
     for idx, item in enumerate(results['items']):
         track = {}
@@ -136,11 +142,16 @@ def get_recent_tracks():
         track["time"] = datetime.now()
         track['id_version'] = f"{uuid.uuid4()}"
 
-        tracks.append(track)
-        artist_ids.append(item["track"]["artists"][0]["id"])
+        # Only append the track if it doesn't already exist in the database
+        if track['id'] not in existing_tracks:
+            tracks.append(track)
+            artist_ids.append(item["track"]["artists"][0]["id"])
 
     df = pd.DataFrame(tracks)
     write_data(df, 'recent_tracks', "C:/SparkCourse/spotify/checkpoints/recent_tracks")
+
+    # Close the session
+    session.close()
 
     return artist_ids
 
