@@ -1,4 +1,3 @@
-
 import pandas as pd
 import spotipy
 from sqlalchemy import create_engine
@@ -16,15 +15,15 @@ import pytz
 scope = "user-top-read user-library-read user-read-recently-played"
 sp = spotipy.Spotify(
     auth_manager=SpotifyOAuth(
-        client_id="...",
-        client_secret="...",
+        client_id="4f009464189c46a68944314cc79958a6",
+        client_secret="6f59229d30464c2589d8fdff0e44f13a",
         redirect_uri="http://127.0.0.1:9090",
         scope=scope
     )
 )
 
 # PostgreSQL connection (hardcoded for this example)
-engine = create_engine('postgresql://postgres:password@localhost:5432/spotipy')
+engine = create_engine('postgresql://postgres:2585@localhost:5432/spotipy')
 
 # Check if the directories to save Parquet files exist, if not create them
 directories = [
@@ -124,7 +123,7 @@ def get_recent_tracks():
     # Query all track ids from the recent_tracks table
     existing_tracks = {row.id for row in session.query(RecentTracks.id)}
 
-    results = sp.current_user_recently_played()
+    results = sp.current_user_recently_played(limit=50)
     for idx, item in enumerate(results['items']):
         track = {}
         track['name'] = item["track"]["name"]
@@ -243,6 +242,7 @@ artist_ids = []
 try:
     for term in terms:
         artist_ids.extend(get_top_artists(term))
+        artist_ids.extend(get_top_tracks(term))
 
     artist_ids.extend(get_recent_tracks())
     populate_related_artists(artist_ids)
