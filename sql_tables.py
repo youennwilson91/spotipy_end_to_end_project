@@ -21,6 +21,7 @@ class TopTracks(Base):
     popularity = Column(Integer)
     key = Column(Integer)
     loudness = Column(Float)
+    explicit = Column(String)
     term = Column(String)
     time = Column(TIMESTAMP, default=func.now())
 
@@ -34,7 +35,6 @@ class TopArtists(Base):
     genre = Column(String)
     popularity = Column(Integer)
     top_tracks = Column(String)
-    related_artists = Column(String)
     term = Column(String)
     time = Column(TIMESTAMP, default=func.now())
 
@@ -50,6 +50,7 @@ class RecentTracks(Base):
     bpm = Column(Float)
     key = Column(Integer)
     loudness = Column(Float)
+    explicit = Column(String)
     played_at = Column(String)
     time = Column(TIMESTAMP, default=func.now())
 
@@ -60,9 +61,15 @@ class RelatedArtists(Base):
     id_version = Column(String, primary_key=True, default=str(uuid.uuid4()))
     related_artist = Column(String)
 
+class ArtistsImageUrls(Base):
+    __tablename__ = 'artist_image_urls'
+    index = Column(Integer)
+    artist_name = Column(String, primary_key=True)
+    image_url = Column(String)
+
 
 
 # Connect to the PostgreSQL database
-engine = create_engine('postgresql://postgres:xxxx@localhost:5432/spotipy')
+engine = create_engine('postgresql://postgres:2585@localhost:5432/spotipy')
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
