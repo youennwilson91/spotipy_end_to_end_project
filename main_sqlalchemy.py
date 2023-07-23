@@ -1,4 +1,5 @@
 
+
 import pandas as pd
 import spotipy
 from sqlalchemy import create_engine
@@ -95,12 +96,20 @@ def get_top_tracks(term):
         track['name'] = item['name']
         track['artist'] = item["artists"][0]["name"]
         track['preview_url'] = item["preview_url"]
-        analysis = sp.audio_analysis(track['id'])
-        track['duration'] = analysis["track"]["duration"]
-        track['bpm'] = analysis["track"]["tempo"]
+        try:
+            analysis = sp.audio_analysis(track['id'])
+        except spotipy.exceptions.SpotifyException as e:
+            print(f"Couldn't get audio analysis for track {track['id']}. Error: {str(e)}")
+            track['duration'] = 0
+            track['bpm'] = 0
+            track['key'] = 0
+            track['loudness'] = 0
+        else:
+            track['duration'] = analysis["track"]["duration"]
+            track['bpm'] = analysis["track"]["tempo"]
+            track['key'] = analysis["track"]["key"]
+            track['loudness'] = analysis["track"]["loudness"]
         track['popularity'] = item["popularity"]
-        track['key'] = analysis["track"]["key"]
-        track['loudness'] = analysis["track"]["loudness"]
         track['explicit'] = item["explicit"]
         track['term'] = term
         track["time"] = datetime.now()
@@ -132,13 +141,22 @@ def get_recent_tracks():
         track['id'] = item["track"]['id']
         track['popularity'] = item["track"]["popularity"]
         track['preview_url'] = item["track"]["preview_url"]
-        analysis = sp.audio_analysis(track['id'])
-        track['duration'] = analysis["track"]["duration"]
-        track['bpm'] = analysis["track"]["tempo"]
-        track['key'] = analysis["track"]["key"]
-        track['loudness'] = analysis["track"]["loudness"]
         track['explicit'] = item["track"]["explicit"]
         track['played_at'] = convert_to_paris_time(item['played_at'])
+        try:
+            analysis = sp.audio_analysis(track['id'])
+        except spotipy.exceptions.SpotifyException as e:
+            print(f"Couldn't get audio analysis for track {track['id']}. Error: {str(e)}")
+            track['duration'] = 0
+            track['bpm'] = 0
+            track['key'] = 0
+            track['loudness'] = 0
+        else:
+            track['duration'] = analysis["track"]["duration"]
+            track['bpm'] = analysis["track"]["tempo"]
+            track['key'] = analysis["track"]["key"]
+            track['loudness'] = analysis["track"]["loudness"]
+
         track["time"] = datetime.now()
         track['id_version'] = f"{uuid.uuid4()}"
 
@@ -238,7 +256,6 @@ terms = ["short_term", "medium_term", "long_term"]
 # Start timer to check script execution time
 start_time = time.time()
 
-# try:
 artist_ids = []
 try:
     for term in terms:
@@ -250,14 +267,15 @@ try:
     update_artist_urls()
 
 except spotipy.SpotifyException as e:
-    print(f"An error has occurred with Spotipy: {e}")
+     print(f"An error has occurred with Spotipy: {e}")
 except spotipy.SpotifyOauthError as e:
-    print(f"Authentication Error: {e}")
+     print(f"Authentication Error: {e}")
 except Exception as e:
-    print(f"An unexpected error has occurred: {e}")
+     print(f"An unexpected error has occurred: {e}")
 else:
-    print("SUCCESS ! ;)")
+     print("SUCCESS ! ;)")
 finally:
-    end_time = time.time()
-    execution_time = end_time - start_time
-    print(f"The script took {execution_time:.2f} seconds to run.")
+     end_time = time.time()
+     execution_time = end_time - start_time
+     print(f"The script took {execution_time:.2f} seconds to run.")
+
