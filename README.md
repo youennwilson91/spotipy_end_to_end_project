@@ -6,8 +6,8 @@ All this data is stored into a local postgresql database. I use Windows Task Sch
 
 Finally, I use Power BI to connect to the postgresql database and make visualisations. Here is what the dashboard looks like:
 
-![image](https://github.com/youennwilson91/spotipy_end_to_end_project/assets/117467104/8eebd872-c3a9-4b79-a314-90409cfbf4f9)
-![image](https://github.com/youennwilson91/spotipy_end_to_end_project/assets/117467104/a0eb856b-e6e0-4256-b813-105d1c5be343)
+![Capture d’écran 2023-07-30 201341](https://github.com/youennwilson91/spotipy_end_to_end_project/assets/117467104/4986b5ce-725f-45cb-b57d-ca168136dfb4)
+![Capture d'écran 2023-07-30 201441](https://github.com/youennwilson91/spotipy_end_to_end_project/assets/117467104/b21fef14-db38-4ead-8cb7-e0359dd745b6)
 ![image](https://github.com/youennwilson91/spotipy_end_to_end_project/assets/117467104/f6dc9d91-cfae-4e92-a035-0e2133cfbfbd)
 
 
