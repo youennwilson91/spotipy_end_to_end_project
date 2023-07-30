@@ -1,4 +1,3 @@
-![Capture d’écran 2023-07-30 201801](https://github.com/youennwilson91/spotipy_end_to_end_project/assets/117467104/bcf3c0fd-fadd-46a7-ad42-2587c0321ebe)# spotipy_end_to_end_project
 
 This project aims to visualise my own spotify data. It uses the spotify api through the spotipy module to get my top artist, top songs and most recent song streamed. I also get info on the related artist of the artists I listen to.
 
